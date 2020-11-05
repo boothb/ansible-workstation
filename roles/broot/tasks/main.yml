@@ -1,0 +1,32 @@
+---
+
+- name: Check for existing broot binary
+  stat:
+    path: /usr/local/bin/broot
+  register: binary
+
+- name: Upgrade broot binary
+  get_url:
+    url: https://dystroy.org/broot/download/x86_64-linux/broot
+    dest: /usr/local/bin/
+    mode: 755
+    force: yes
+  become: yes
+  when: binary.stat.exists
+
+- name: Install broot and br
+  block:
+  - name: Download broot binary
+    get_url:
+      url: https://dystroy.org/broot/download/x86_64-linux/broot
+      dest: /usr/local/bin/
+      mode: 755
+    become: yes
+
+  - name: Setup br for current user
+    shell: /usr/local/bin/broot --install
+
+  - name: Setup br for root user
+    shell: /usr/local/bin/broot --install
+    become: yes
+  when: not binary.stat.exists
