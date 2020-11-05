@@ -1,0 +1,76 @@
+---
+
+- name: Check for existing gost binary
+  stat:
+    path: /home/{{ lookup('env','USER') }}/bin/gost
+  register: binary
+
+- name: Read gost version
+  when: binary.stat.exists
+  shell: /home/{{ lookup('env','USER') }}/bin/gost -V |& /bin/sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p'
+  register: current_gost_version
+
+- name: Upgrade gost
+  block:
+  - name: Download gost binary
+    get_url:
+      url: https://github.com/ginuerzh/gost/releases/download/v{{ gost_version }}/gost-linux-amd64-{{ gost_version }}.gz
+      dest: /tmp/
+
+  - name: Gunzip gost binary
+    shell: /usr/bin/gunzip -f /tmp/gost-linux-amd64-{{ gost_version }}.gz
+
+  - name: Stop gost systemd unit
+    systemd:
+      scope: user
+      state: stopped
+      enabled: yes
+      name: gost
+
+  - name: Copy gost binary
+    copy:
+      src: /tmp/gost-linux-amd64-{{ gost_version }}
+      dest: /home/{{ lookup('env','USER') }}/bin/gost
+      mode: 755
+
+  - name: Daemon reload and start gost systemd unit
+    systemd:
+      scope: user
+      state: started
+      enabled: yes
+      daemon_reload: yes
+      name: gost
+  when: binary.stat.exists and (gost_version != current_gost_version.stdout)
+
+- name: Install gost
+  block:
+  - name: Download gost binary
+    get_url:
+      url: https://github.com/ginuerzh/gost/releases/download/v{{ gost_version }}/gost-linux-amd64-{{ gost_version }}.gz
+      dest: /tmp/
+
+  - name: Gunzip gost binary
+    shell: /usr/bin/gunzip -f /tmp/gost-linux-amd64-{{ gost_version }}.gz
+
+  - name: Copy gost binary
+    copy:
+      src: /tmp/gost-linux-amd64-{{ gost_version }}
+      dest: /home/{{ lookup('env','USER') }}/bin/gost
+      mode: 755
+
+  - name: Install gost systemd unit
+    template:
+      src: gost.service.j2
+      dest: /home/{{ lookup('env','USER') }}/.config/systemd/user/gost.service
+
+  - name: Daemon reload and start gost systemd unit
+    systemd:
+      scope: user
+      state: started
+      enabled: yes
+      daemon_reload: yes
+      name: gost
+
+  - name: Enable systemd lingering
+    command: loginctl enable-linger {{ lookup('env','USER') }}
+  when: not binary.stat.exists

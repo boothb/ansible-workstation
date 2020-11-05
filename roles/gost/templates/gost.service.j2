@@ -1,0 +1,11 @@
+[Unit]
+Description=GO Simple Tunnel
+
+[Service]
+Type=simple
+ExecStart=/home/{{ lookup('env','USER') }}/bin/gost -L=socks://0.0.0.0:64165
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=default.target
