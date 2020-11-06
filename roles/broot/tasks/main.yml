@@ -29,4 +29,17 @@
   - name: Setup br for root user
     shell: /usr/local/bin/broot --install
     become: yes
+
+  - name: Edit default_flags of broot for current user
+    replace:
+      path: /home/{{ lookup('env','USER') }}/.config/broot/conf.toml
+      regexp: '^default_flags.*\"$'
+      replace: 'default_flags = "ih"'
+
+  - name: Edit default_flags of broot for root user
+    replace:
+      path: /root/.config/broot/conf.toml
+      regexp: '^default_flags.*\"$'
+      replace: 'default_flags = "ih"'
+    become: yes
   when: not binary.stat.exists
