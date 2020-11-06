@@ -9,16 +9,16 @@
 
   - name: Install latest user bash common file
     copy:
-      src: common
-      dest: /home/{{ lookup('env','USER') }}/.config/bash/common
+      src: common.bash
+      dest: /home/{{ lookup('env','USER') }}/.config/bash/common.bash
       force: yes
 
   - name: Source user bash common file
     lineinfile:
       path: /home/{{ lookup('env','USER') }}/.bashrc
       state: present
-      regexp: '^source.*\.config/bash/common$'
-      line: source /home/{{ lookup('env','USER') }}/.config/bash/common
+      regexp: '^source.*\.config/bash/common\.bash$'
+      line: source /home/{{ lookup('env','USER') }}/.config/bash/common.bash
 
 - name: Install or upgrade bash modifications for root user
   block:
@@ -29,15 +29,15 @@
 
   - name: Install latest root bash common file
     copy:
-      src: common
-      dest: /root/.config/bash/common
+      src: common.bash
+      dest: /root/.config/bash/common.bash
       force: yes
 
   - name: Source root bash common file
     lineinfile:
       path: /root/.bashrc
       state: present
-      regexp: '^source.*\.config/bash/common$'
-      line: source /root/.config/bash/common
+      regexp: '^source.*\.config/bash/common\.bash$'
+      line: source /root/.config/bash/common.bash
   become: yes
 

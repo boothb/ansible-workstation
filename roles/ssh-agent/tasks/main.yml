@@ -1,0 +1,37 @@
+---
+  
+- name: Copy ssh-agent systemd unit
+  copy:
+    src: ssh-agent.service
+    dest: /home/{{ lookup('env','USER') }}/.config/systemd/user/ssh-agent.service
+
+- name: Set SSH_AUTH_SOCK in .pam_environment
+  lineinfile:
+    path: /home/{{ lookup('env','USER') }}/.pam_environment
+    state: present
+    create: yes
+    regexp: '^SSH_AUTH_SOCK DEFAULT.*/ssh-agent.socket\"$'
+    line: SSH_AUTH_SOCK DEFAULT="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+
+- name: Reload daemon and start systemd unit
+  systemd:
+    scope: user
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: ssh-agent
+
+- name: Enable systemd lingering
+  command: loginctl enable-linger {{ lookup('env','USER') }}
+
+- name: Copy ssh-agent bash file
+  copy:
+    src: ssh-agent.bash
+    dest: /home/{{ lookup('env','USER') }}/.config/bash/ssh-agent.bash
+
+- name: Source ssh-agent bash file
+  lineinfile:
+    path: /home/{{ lookup('env','USER') }}/.bashrc
+    state: present
+    regexp: '^source.*\.config/bash/ssh-agent\.bash$'
+    line: source /home/{{ lookup('env','USER') }}/.config/bash/ssh-agent.bash

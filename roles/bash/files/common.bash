@@ -1,5 +1,11 @@
 # File created by Ansible and sourced by .bashrc
 
+# Set some common variables locally
+
+export PAGER=/bin/less
+export EDITOR=/bin/vim
+export VISUAL=/bin/vim
+
 # I don't like systemctl's auto-paging feature
 export SYSTEMD_PAGER=''
 

@@ -1,0 +1,35 @@
+---
+
+- name: Installing base packages
+  package:
+    name:
+      - vim
+      - openvpn
+      - tmux
+      - git
+      - make
+      - socat
+      - ansible
+      - openssh-clients
+    state: latest  
+  become: yes
+
+- name: Making sure user directories are existing
+  block:
+  - name: ~/.config/systemd/user
+    file:
+      path:  /home/{{ lookup('env','USER') }}/.config/systemd/user
+      state: directory
+
+  - name: ~/bin
+    file:
+      path:  /home/{{ lookup('env','USER') }}/bin
+      state: directory
+  
+- name: Making sure root directories are existing
+  block:
+  - name: ~/.config
+    file:
+      path:  /root/.config
+      state: directory
+  become: yes
