@@ -1,0 +1,43 @@
+---
+
+- name: Install or upgrade bash modifications for current user
+  block:
+  - name: Create user bash configuration directory
+    file:
+      path:  /home/{{ lookup('env','USER') }}/.config/bash
+      state: directory
+
+  - name: Install latest user bash common file
+    copy:
+      src: common
+      dest: /home/{{ lookup('env','USER') }}/.config/bash/common
+      force: yes
+
+  - name: Source user bash common file
+    lineinfile:
+      path: /home/{{ lookup('env','USER') }}/.bashrc
+      state: present
+      regexp: '^source.*\.config/bash/common$'
+      line: source /home/{{ lookup('env','USER') }}/.config/bash/common
+
+- name: Install or upgrade bash modifications for root user
+  block:
+  - name: Create root bash configuration directory
+    file:
+      path:  /root/.config/bash
+      state: directory
+
+  - name: Install latest root bash common file
+    copy:
+      src: common
+      dest: /root/.config/bash/common
+      force: yes
+
+  - name: Source root bash common file
+    lineinfile:
+      path: /root/.bashrc
+      state: present
+      regexp: '^source.*\.config/bash/common$'
+      line: source /root/.config/bash/common
+  become: yes
+
