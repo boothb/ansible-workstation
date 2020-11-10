@@ -11,6 +11,8 @@
       - socat
       - ansible
       - openssh-clients
+      - net-snmp-utils
+
     state: latest  
   become: yes
 
