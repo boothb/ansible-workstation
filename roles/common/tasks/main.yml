@@ -12,6 +12,7 @@
       - ansible
       - openssh-clients
       - net-snmp-utils
+      - jq
 
     state: latest  
   become: yes
