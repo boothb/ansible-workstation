@@ -13,6 +13,7 @@
       - openssh-clients
       - net-snmp-utils
       - jq
+      - fping
 
     state: latest  
   become: yes
