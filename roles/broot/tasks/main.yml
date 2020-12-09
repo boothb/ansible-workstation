@@ -1,5 +1,12 @@
 ---
 
+- name: Installing dependency
+  package:
+    name:
+      - libxcb
+    state: latest
+  become: yes
+
 - name: Check for existing broot binary
   stat:
     path: /usr/local/bin/broot
