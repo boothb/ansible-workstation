@@ -1,9 +1,9 @@
 ---
 
-- name: Installing base packages
+- name: Latest packages
   package:
     name:
-      - vim
+      - vim-enhanced
       - openvpn
       - tmux
       - git
@@ -14,8 +14,18 @@
       - net-snmp-utils
       - jq
       - fping
-
+      - podman
+      - python3
+      - python3-virtualenv
+      - gcc
     state: latest  
+  become: yes
+
+- name: Absent packages
+  package:
+    name:
+      - vim-minimal
+    state: absent
   become: yes
 
 - name: Making sure user directories are existing
