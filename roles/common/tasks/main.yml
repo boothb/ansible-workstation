@@ -18,6 +18,7 @@
       - python3
       - python3-virtualenv
       - gcc
+      - nmap
     state: latest  
   become: yes
 
