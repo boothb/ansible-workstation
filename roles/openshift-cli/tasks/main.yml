@@ -1,0 +1,37 @@
+---
+
+- name: Check for existing oc binary
+  stat:
+    path: /home/{{ lookup('env','USER') }}/bin/oc
+  register: binary
+
+- name: Read oc version
+  when: binary.stat.exists
+  shell: /home/{{ lookup('env','USER') }}/bin/oc version |& /bin/sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p'
+  register: current_oc_version
+
+- name: Upgrade oc
+  block:
+  - name: Download oc binary
+    get_url:
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ oc_version }}/openshift-client-linux.tar.gz
+      dest: /tmp/
+  - name: Unarchive oc binary
+    unarchive:
+      src: /tmp/openshift-client-linux.tar.gz
+      dest: /home/{{ lookup('env','USER') }}/bin
+      mode: 755
+  when: binary.stat.exists and (oc_version != current_oc_version.stdout)
+
+- name: Install oc
+  block:
+  - name: Download oc binary
+    get_url:
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ oc_version }}/openshift-client-linux.tar.gz
+      dest: /tmp/
+  - name: Unarchive oc binary
+    unarchive:
+      src: /tmp/openshift-client-linux.tar.gz
+      dest: /home/{{ lookup('env','USER') }}/bin
+      mode: 755
+  when: not binary.stat.exists

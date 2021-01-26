@@ -1,0 +1,42 @@
+---
+
+- name: Install azure-cli repository
+  yum_repository:
+    name: azure-cli
+    description: Azure CLI
+    file: azure-cli
+    baseurl: https://packages.microsoft.com/yumrepos/azure-cli
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+  become: yes
+
+- name: Install latest packages
+  package:
+    name:
+      - vim-enhanced
+      - openvpn
+      - tmux
+      - git
+      - make
+      - socat
+      - ansible
+      - openssh-clients
+      - net-snmp-utils
+      - jq
+      - fping
+      - podman
+      - python3
+      - python3-virtualenv
+      - gcc
+      - nmap
+      - azure-cli
+    state: latest  
+  become: yes
+
+- name: Absent packages
+  package:
+    name:
+      - vim-minimal
+    state: absent
+  become: yes

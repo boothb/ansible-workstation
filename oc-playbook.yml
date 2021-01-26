@@ -1,0 +1,6 @@
+- hosts: 127.0.0.1
+  connection: local
+  vars:
+    oc_version: "4.6.13"
+  roles:
+    - openshift-cli
