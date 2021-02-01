@@ -1,0 +1,38 @@
+---
+- name: Check for existing helm binary
+  stat:
+    path: /home/{{ lookup('env','USER') }}/bin/helm
+  register: binary
+
+- name: Read helm version
+  when: binary.stat.exists
+  shell: /home/{{ lookup('env','USER') }}/bin/helm version |& /bin/sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p'
+  register: current_helm_version
+
+- name: Upgrade helm
+  block:
+  - name: Download helm binary
+    get_url:
+      url: https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz
+      dest: /tmp/
+
+  - name: Unarchive helm binary
+    unarchive:
+      src: /tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz
+      dest: /home/{{ lookup('env','USER') }}/bin
+      mode: 755
+  when: binary.stat.exists and (helm_version != current_helm_version.stdout)
+
+- name: Install helm
+  block:
+  - name: Download helm binary
+    get_url:
+      url: https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz
+      dest: /tmp/
+
+  - name: Unarchive helm binary
+    unarchive:
+      src: /tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz
+      dest: /home/{{ lookup('env','USER') }}/bin
+      mode: 755
+  when: not binary.stat.exists

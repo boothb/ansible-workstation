@@ -11,6 +11,18 @@
     gpgkey: https://packages.microsoft.com/keys/microsoft.asc
   become: yes
 
+- name: Install kubernetes repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    file: kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    repo_gpgcheck: yes
+  become: yes
+
 - name: Install latest packages
   package:
     name:
@@ -31,6 +43,7 @@
       - gcc
       - nmap
       - azure-cli
+      - kubectl
     state: latest  
   become: yes
 
