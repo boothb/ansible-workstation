@@ -44,6 +44,7 @@
       - nmap
       - azure-cli
       - kubectl
+      - direnv
     state: latest  
   become: yes
 
