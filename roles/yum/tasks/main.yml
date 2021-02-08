@@ -23,6 +23,17 @@
     repo_gpgcheck: yes
   become: yes
 
+- name: Install hashicorp repository
+  yum_repository:
+    name: hashicorp
+    description: Hashicorp Stable
+    file: hashicorp
+    baseurl: https://rpm.releases.hashicorp.com/fedora/$releasever/$basearch/stable
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
+  become: yes
+
 - name: Install latest packages
   package:
     name:
@@ -45,6 +56,9 @@
       - azure-cli
       - kubectl
       - direnv
+      - packer
+      - terraform
+      - hub
     state: latest  
   become: yes
 
